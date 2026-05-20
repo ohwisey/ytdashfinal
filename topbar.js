@@ -21,35 +21,33 @@
   const css = `
 .topbar {
   position: sticky; top: 0; z-index: 40;
-  display: flex; gap: 6px;
-  padding: max(10px, env(safe-area-inset-top)) 14px 10px;
-  /* Fully opaque so each page's body background can't bleed through
-     and tint the bar a different color. Matches the dashboard's base
-     dark background so the bar feels continuous with the page chrome. */
+  display: flex; justify-content: flex-end; align-items: center;
+  gap: 8px;
+  padding: max(10px, env(safe-area-inset-top)) 14px 8px;
   background: #0a0a0b;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
 }
-.topbar-pill {
-  flex: 1 1 0; min-width: 0;
+.topbar-water-wrap {
+  display: flex; align-items: stretch;
+}
+.topbar-water-pill {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 11px;
+  padding: 9px 14px;
+  background: rgba(125, 211, 252, 0.08);
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
   text-decoration: none;
   color: #FAFAFA;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s, border-color 0.15s;
-  overflow: hidden;
 }
-.topbar-pill:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.10); }
-.topbar-pill-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #6ee7b7; flex-shrink: 0;
+.topbar-water-pill .topbar-pill-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #7DD3FC; flex-shrink: 0;
 }
-.topbar-pill.warn .topbar-pill-dot { background: #fbbf24; }
-.topbar-pill.miss .topbar-pill-dot {
+.topbar-water-pill.warn .topbar-pill-dot { background: #fbbf24; }
+.topbar-water-pill.miss .topbar-pill-dot {
   background: #ff8a8a;
   animation: topbar-miss-pulse 1.6s ease-in-out infinite;
 }
@@ -57,71 +55,95 @@
   0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
   50%      { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
 }
-.topbar-pill-label {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  flex-shrink: 1; min-width: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: clip;
-}
 .topbar-pill-count {
-  margin-left: auto;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 12px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   color: #FAFAFA;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.topbar-water-wrap {
-  flex: 1 1 0; min-width: 0;
-  display: flex;
-}
-.topbar-water-pill {
-  flex: 1; min-width: 0;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
-  background: rgba(125, 211, 252, 0.07);
-  border: 1px solid rgba(125, 211, 252, 0.14);
-  border-right: none;
-  border-radius: 11px 0 0 11px;
-  text-decoration: none;
-  color: #FAFAFA;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s;
-  overflow: hidden;
-}
-.topbar-water-pill:hover { background: rgba(125, 211, 252, 0.12); }
-.topbar-water-pill .topbar-pill-dot { background: #7DD3FC; }
 .topbar-water-add {
-  flex: 0 0 auto;
-  width: 38px;
-  border: 1px solid rgba(125, 211, 252, 0.14);
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.22), rgba(110, 231, 183, 0.22));
+  width: 44px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: linear-gradient(180deg, rgba(125, 211, 252, 0.28), rgba(110, 231, 183, 0.28));
   color: #FFFFFF;
-  font-family: inherit; font-size: 17px; font-weight: 700;
+  font-family: inherit; font-size: 20px; font-weight: 700; line-height: 1;
   cursor: pointer;
-  border-radius: 0 11px 11px 0;
+  border-radius: 0 12px 12px 0;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s, transform 0.10s;
 }
-.topbar-water-add:hover {
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.34), rgba(110, 231, 183, 0.34));
-}
 .topbar-water-add:active { transform: scale(0.94); }
 .topbar-water-add.flash {
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.65), rgba(110, 231, 183, 0.65));
+  background: linear-gradient(180deg, rgba(125, 211, 252, 0.7), rgba(110, 231, 183, 0.7));
+}
+.topbar-finance-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.topbar-finance-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.topbar-finance-icon {
+  font-size: 20px; line-height: 1;
+  filter: grayscale(100%) brightness(1.4);
+  opacity: 0.85;
+}
+
+/* Bottom tab bar — Instagram-style */
+.bottombar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+  display: flex; justify-content: space-around; align-items: stretch;
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+  background: #0a0a0b;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+}
+.bottombar-tab {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  padding: 6px 0 4px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+.bottombar-tab-icon {
+  font-size: 24px; line-height: 1;
+  filter: grayscale(100%) brightness(1.2);
+  opacity: 0.55;
+  transition: opacity 0.15s, filter 0.15s, transform 0.10s;
+}
+.bottombar-tab.active {
+  color: #FAFAFA;
+}
+.bottombar-tab.active .bottombar-tab-icon {
+  filter: grayscale(100%) brightness(1.6);
+  opacity: 1;
+}
+.bottombar-tab:active .bottombar-tab-icon { transform: scale(0.92); }
+
+/* Push page content above the fixed bottom bar */
+body.has-bottombar {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
 }
 
 @media (max-width: 480px) {
-  .topbar { padding-left: 10px; padding-right: 10px; gap: 4px; }
-  .topbar-pill, .topbar-water-pill { padding: 7px 8px; gap: 4px; }
-  .topbar-pill-label { font-size: 9px; letter-spacing: 0.08em; }
-  .topbar-pill-count { font-size: 11px; }
-  .topbar-water-add { width: 30px; font-size: 15px; }
-  .topbar-water-pill .topbar-pill-label { display: none; }
-}
-@media (max-width: 360px) {
-  .topbar-pill .topbar-pill-label { display: none; }
+  .topbar { padding-left: 10px; padding-right: 10px; gap: 6px; }
+  .topbar-water-pill { padding: 8px 11px; gap: 6px; }
+  .topbar-pill-count { font-size: 12px; }
+  .topbar-water-add { width: 40px; font-size: 18px; }
+  .topbar-finance-btn { width: 40px; height: 38px; }
+  .topbar-finance-icon { font-size: 18px; }
+  .bottombar-tab-icon { font-size: 22px; }
+  .bottombar-tab { font-size: 10px; }
 }
 
 /* === Global mobile lockdown ===
@@ -171,47 +193,85 @@ body.topbar-modal-open {
 `;
 
   // -------- HTML --------
-  const html = `
-<header class="topbar" id="topbar" role="navigation" aria-label="Quick stats">
-  <a href="index.html" class="topbar-pill" id="topbarGoals">
-    <span class="topbar-pill-dot"></span>
-    <span class="topbar-pill-label">GOALS</span>
-    <span class="topbar-pill-count" id="topbarGoalsCount">—/—</span>
-  </a>
-  <a href="health.html" class="topbar-pill" id="topbarStack">
-    <span class="topbar-pill-dot"></span>
-    <span class="topbar-pill-label">STACK</span>
-    <span class="topbar-pill-count" id="topbarStackCount">—/—</span>
-  </a>
+  const topbarHtml = `
+<header class="topbar" id="topbar" role="navigation" aria-label="Quick actions">
   <div class="topbar-water-wrap">
-    <a href="health.html#water" class="topbar-water-pill" id="topbarWater">
+    <a href="health.html#water" class="topbar-water-pill" id="topbarWater" aria-label="Water progress">
       <span class="topbar-pill-dot"></span>
-      <span class="topbar-pill-label">WATER</span>
-      <span class="topbar-pill-count" id="topbarWaterCount">—/—</span>
+      <span class="topbar-pill-count" id="topbarWaterCount">0/0</span>
     </a>
     <button class="topbar-water-add" id="topbarWaterAdd" aria-label="Log one drink" type="button">+</button>
   </div>
-  <a href="gym.html" class="topbar-pill" id="topbarGym">
-    <span class="topbar-pill-dot"></span>
-    <span class="topbar-pill-label">GYM</span>
-  </a>
-  <a href="finance.html" class="topbar-pill" id="topbarFinance">
-    <span class="topbar-pill-dot"></span>
-    <span class="topbar-pill-label">FINANCE</span>
+  <a href="finance.html" class="topbar-finance-btn" id="topbarFinance" aria-label="Finance">
+    <span class="topbar-finance-icon">📊</span>
   </a>
 </header>
 `;
 
+  const bottombarHtml = `
+<nav class="bottombar" id="bottombar" role="navigation" aria-label="Main tabs">
+  <a href="index.html" class="bottombar-tab" data-page="main">
+    <span class="bottombar-tab-icon">🏠</span>
+    <span>Main</span>
+  </a>
+  <a href="health.html" class="bottombar-tab" data-page="health">
+    <span class="bottombar-tab-icon">💊</span>
+    <span>Health</span>
+  </a>
+  <a href="gym.html" class="bottombar-tab" data-page="fitness">
+    <span class="bottombar-tab-icon">💪</span>
+    <span>Fitness</span>
+  </a>
+</nav>
+`;
+
+  // Pages where we suppress the app chrome: finance has its own internal
+  // 4-tab bottom nav and self-contained back button.
+  function isFinancePage() {
+    const p = (window.location.pathname || '').toLowerCase();
+    return p.endsWith('/finance.html') || p.endsWith('finance.html');
+  }
+  // When the water tracker is iframed inside health.html, the embedded
+  // page shouldn't render its own chrome again.
+  function isEmbedded() {
+    try { return window.self !== window.top; } catch (e) { return true; }
+  }
+  function shouldShowChrome() {
+    return !isFinancePage() && !isEmbedded();
+  }
+  function currentPageKey() {
+    const p = (window.location.pathname || '').toLowerCase();
+    if (p.endsWith('health.html')) return 'health';
+    if (p.endsWith('gym.html')) return 'fitness';
+    return 'main'; // index.html, /, or anything else falls back to main
+  }
+
   function injectStyleAndHTML() {
-    if (document.getElementById('topbar')) return; // already injected
+    if (document.getElementById('topbar') || document.getElementById('bottombar')) return;
+    if (!shouldShowChrome()) return;
+
     const style = document.createElement('style');
     style.id = 'topbar-style';
     style.textContent = css;
     document.head.appendChild(style);
 
-    const wrap = document.createElement('div');
-    wrap.innerHTML = html.trim();
-    document.body.insertBefore(wrap.firstChild, document.body.firstChild);
+    const topWrap = document.createElement('div');
+    topWrap.innerHTML = topbarHtml.trim();
+    document.body.insertBefore(topWrap.firstChild, document.body.firstChild);
+
+    const bottomWrap = document.createElement('div');
+    bottomWrap.innerHTML = bottombarHtml.trim();
+    document.body.appendChild(bottomWrap.firstChild);
+
+    // Highlight the active bottom tab.
+    const active = currentPageKey();
+    document.querySelectorAll('.bottombar-tab').forEach((t) => {
+      t.classList.toggle('active', t.getAttribute('data-page') === active);
+    });
+
+    // Reserve room above the fixed bottom bar so page content can scroll
+    // past it without being hidden.
+    document.body.classList.add('has-bottombar');
   }
 
   // -------- Active-date helpers (match the goals page 6 AM rollover) --------
@@ -294,24 +354,12 @@ body.topbar-modal-open {
   }
 
   function render() {
-    const goalsEl = document.getElementById('topbarGoals');
-    const stackEl = document.getElementById('topbarStack');
     const waterEl = document.getElementById('topbarWater');
-    if (!goalsEl) return; // not injected yet
+    if (!waterEl) return; // not injected yet
 
-    const g = getGoalsProgress();
-    const s = getStackProgress();
     const w = getWaterProgress();
-
-    document.getElementById('topbarGoalsCount').textContent =
-      g.total ? g.done + '/' + g.total : '0/0';
-    document.getElementById('topbarStackCount').textContent =
-      s.total ? s.done + '/' + s.total : '0/0';
-    document.getElementById('topbarWaterCount').textContent =
-      w.total ? w.done + '/' + w.total : '0/0';
-
-    setPillStatus(goalsEl, classifyStatus(g.done, g.total));
-    setPillStatus(stackEl, classifyStatus(s.done, s.total));
+    const countEl = document.getElementById('topbarWaterCount');
+    if (countEl) countEl.textContent = w.total ? w.done + '/' + w.total : '0/0';
     setPillStatus(waterEl, classifyStatus(w.done, w.total));
   }
 
