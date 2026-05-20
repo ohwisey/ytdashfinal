@@ -41,6 +41,7 @@
   color: #FAFAFA;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s, border-color 0.15s;
+  overflow: hidden;
 }
 .topbar-pill:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.10); }
 .topbar-pill-dot {
@@ -60,7 +61,8 @@
   font-size: 10px; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(255, 255, 255, 0.5);
-  flex-shrink: 0;
+  flex-shrink: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
 .topbar-pill-count {
   margin-left: auto;
@@ -86,6 +88,7 @@
   color: #FAFAFA;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s;
+  overflow: hidden;
 }
 .topbar-water-pill:hover { background: rgba(125, 211, 252, 0.12); }
 .topbar-water-pill .topbar-pill-dot { background: #7DD3FC; }
@@ -111,13 +114,14 @@
 
 @media (max-width: 480px) {
   .topbar { padding-left: 10px; padding-right: 10px; gap: 4px; }
-  .topbar-pill, .topbar-water-pill { padding: 7px 9px; gap: 5px; }
-  .topbar-pill-label { font-size: 9px; letter-spacing: 0.10em; }
+  .topbar-pill, .topbar-water-pill { padding: 7px 8px; gap: 4px; }
+  .topbar-pill-label { font-size: 9px; letter-spacing: 0.08em; }
   .topbar-pill-count { font-size: 11px; }
-  .topbar-water-add { width: 32px; font-size: 16px; }
+  .topbar-water-add { width: 30px; font-size: 15px; }
+  .topbar-water-pill .topbar-pill-label { display: none; }
 }
-@media (max-width: 380px) {
-  .topbar-pill-label { display: none; }
+@media (max-width: 360px) {
+  .topbar-pill .topbar-pill-label { display: none; }
 }
 
 /* === Global mobile lockdown ===
