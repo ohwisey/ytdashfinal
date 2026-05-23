@@ -506,14 +506,159 @@ main {
 <body>
 
 <main>
-  <a href="sleep-tracker/index.html" class="sleep-open-btn">
-    <span class="sleep-open-icon">🌙</span>
-    <span class="sleep-open-text">
-      <span class="sleep-open-title">Sleep Tracker</span>
-      <span class="sleep-open-sub">Open full tracker</span>
-    </span>
-    <span class="sleep-open-chevron">›</span>
-  </a>
+  <script>
+    window.SLEEP_TRACKER = {
+      supabaseUrl:     'https://srajryooffirbroltjmg.supabase.co',
+      supabaseAnonKey: 'sb_publishable_5142ZwTLF_DkSVRzciNuRA_bHwRAu4c',
+      targetHours:     8
+    };
+  </script>
+  <section class="sleep-card-root" id="sleepCardRoot">
+    <style>
+      .sleep-card-root {
+        --sc-text:#FAFAFA; --sc-text-2:#B8B6B0; --sc-text-3:#76746E; --sc-text-4:#4D4B47;
+        --sc-accent:#B794F4; --sc-accent-2:#7DD3FC;
+        --sc-good:#6BE3A4; --sc-warn:#F2C063; --sc-bad:#FF8A8A;
+        --sc-radius:16px;
+        --sc-font:-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+        --sc-mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        display:block; font-family:var(--sc-font); color:var(--sc-text); margin-bottom:14px;
+      }
+      .sleep-card-root * { box-sizing:border-box; }
+      .sc-eyebrow {
+        font-size:10.5px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase;
+        color:var(--sc-text-3); margin-bottom:12px;
+        display:flex; align-items:center; gap:12px; font-family:var(--sc-mono);
+      }
+      .sc-eyebrow::before {
+        content:''; width:18px; height:1px; background:var(--sc-text-3); opacity:0.6;
+      }
+      .sc-eyebrow-text { display:inline-flex; align-items:center; gap:8px; }
+      .sc-eyebrow-text::before { content:'≡'; font-size:14px; color:var(--sc-text-3); opacity:0.5; }
+      .sc-eyebrow::after {
+        content:''; flex:1; height:1px;
+        background:linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
+      }
+      .sc-card {
+        background:rgba(255,255,255,0.04); border:1px solid transparent;
+        border-radius:var(--sc-radius); padding:18px 20px 16px;
+        backdrop-filter:blur(24px) saturate(1.2);
+        -webkit-backdrop-filter:blur(24px) saturate(1.2);
+        box-shadow:0 1px 0 0 rgba(255,255,255,0.06) inset,
+          0 12px 40px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.25);
+        position:relative; overflow:hidden;
+      }
+      .sc-card::before {
+        content:''; position:absolute; top:0; left:14px; right:14px; height:1px;
+        background:linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+        pointer-events:none;
+      }
+      .sc-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+      .sc-head-left { min-width:0; }
+      .sc-head-label { font-size:11px; color:var(--sc-text-3); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; margin-bottom:2px; }
+      .sc-hours { font-size:34px; font-weight:700; letter-spacing:-0.02em; color:var(--sc-text); line-height:1.05; font-variant-numeric:tabular-nums; }
+      .sc-hours-unit { font-size:14px; color:var(--sc-text-3); font-weight:500; margin-left:4px; }
+      .sc-times { font-size:11px; color:var(--sc-text-3); margin-top:6px; font-family:var(--sc-mono); }
+      .sc-times-dot { display:inline-block; margin:0 6px; opacity:0.5; }
+      .sc-status-pill {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:5px 11px; border-radius:999px;
+        font-size:10.5px; font-weight:700; font-family:var(--sc-mono);
+        letter-spacing:0.06em; text-transform:uppercase;
+        background:rgba(255,255,255,0.04); color:var(--sc-text-3);
+      }
+      .sc-status-pill::before {
+        content:''; width:5px; height:5px; border-radius:50%; background:currentColor;
+        box-shadow:0 0 5px currentColor;
+      }
+      .sc-status-pill.good { color:var(--sc-good); background:rgba(107,227,164,0.10); }
+      .sc-status-pill.warn { color:var(--sc-warn); background:rgba(242,192,99,0.10); }
+      .sc-status-pill.bad  { color:var(--sc-bad);  background:rgba(255,138,138,0.10); }
+      .sc-spark-wrap { margin:4px -4px 14px; padding:10px 6px 0; background:rgba(255,255,255,0.025); border-radius:12px; position:relative; }
+      .sc-spark-head { display:flex; justify-content:space-between; font-size:9.5px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--sc-text-3); font-family:var(--sc-mono); padding:0 8px; }
+      .sc-spark-svg { display:block; width:100%; height:90px; color:var(--sc-accent); overflow:visible; }
+      .sc-stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05); }
+      @media (max-width:540px) { .sc-stats { grid-template-columns:repeat(2, 1fr); } }
+      .sc-stat { display:flex; flex-direction:column; gap:2px; padding:4px 6px; }
+      .sc-stat-label { font-size:9px; letter-spacing:0.16em; font-weight:800; text-transform:uppercase; color:var(--sc-text-3); font-family:var(--sc-mono); }
+      .sc-stat-val { font-size:14px; font-weight:700; color:var(--sc-text); font-variant-numeric:tabular-nums; font-family:var(--sc-mono); }
+      .sc-stat-val.good { color:var(--sc-good); } .sc-stat-val.warn { color:var(--sc-warn); } .sc-stat-val.bad { color:var(--sc-bad); }
+      .sc-msg { padding:24px 12px; text-align:center; font-size:12.5px; color:var(--sc-text-3); font-style:italic; }
+      .sc-msg.bad { color:var(--sc-bad); font-style:normal; }
+    </style>
+    <div class="sc-eyebrow"><span class="sc-eyebrow-text">SLEEP</span></div>
+    <div class="sc-card" id="scCard">
+      <div class="sc-msg" id="scMsg">Loading sleep…</div>
+    </div>
+  </section>
+  <script>
+  (function () {
+    const CFG = (typeof window !== 'undefined' && window.SLEEP_TRACKER) || {};
+    const SUPABASE_URL = CFG.supabaseUrl || '';
+    const SUPABASE_KEY = CFG.supabaseAnonKey || '';
+    const TARGET_HOURS = Number(CFG.targetHours) || 8;
+    const root = document.getElementById('sleepCardRoot');
+    if (!root) return;
+    const cardEl = root.querySelector('#scCard');
+    function showMsg(text, isBad) {
+      cardEl.innerHTML = '<div class="sc-msg' + (isBad ? ' bad' : '') + '">' + text + '</div>';
+    }
+    async function fetchSleepLogs() {
+      if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error('Set window.SLEEP_TRACKER.supabaseUrl and supabaseAnonKey.');
+      const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/sleep_logs?select=*&order=date.desc&limit=14';
+      const res = await fetch(url, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Accept': 'application/json' } });
+      if (!res.ok) { const body = await res.text().catch(() => ''); throw new Error('Supabase ' + res.status + ': ' + (body || res.statusText)); }
+      return await res.json();
+    }
+    function fmtHrs(h) { if (h == null || isNaN(h)) return '—'; const hours = Math.floor(h); const mins = Math.round((h - hours) * 60); if (mins === 0) return hours + 'h'; return hours + 'h ' + String(mins).padStart(2, '0') + 'm'; }
+    function fmtTime(iso) { const d = new Date(iso); if (isNaN(d)) return '—'; return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
+    function avgLast(rows, n) { if (!rows.length) return null; const slice = rows.slice(0, n); const sum = slice.reduce((s, r) => s + Number(r.duration_hours || 0), 0); return sum / slice.length; }
+    function smoothPath(pts) { if (pts.length < 2) return ''; const d = ['M' + pts[0].x + ',' + pts[0].y]; for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[i - 1] || pts[i]; const p1 = pts[i]; const p2 = pts[i + 1]; const p3 = pts[i + 2] || p2; const c1x = p1.x + (p2.x - p0.x) / 6; const c1y = p1.y + (p2.y - p0.y) / 6; const c2x = p2.x - (p3.x - p1.x) / 6; const c2y = p2.y - (p3.y - p1.y) / 6; d.push('C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + p2.x + ',' + p2.y); } return d.join(' '); }
+    function stat(label, val, cls) { return '<div class="sc-stat"><div class="sc-stat-label">' + label + '</div><div class="sc-stat-val ' + (cls || '') + '">' + val + '</div></div>'; }
+    function avgClass(avg) { if (avg == null) return ''; if (avg < TARGET_HOURS - 1.5) return 'bad'; if (avg < TARGET_HOURS - 0.5) return 'warn'; return 'good'; }
+    function debtClass(debt) { if (debt == null) return ''; if (debt > 5) return 'bad'; if (debt > 2) return 'warn'; return 'good'; }
+    function render(rows) {
+      rows = rows.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      if (!rows.length) { showMsg('No sleep yet — run the iOS Shortcut after waking up.'); return; }
+      const last = rows[0];
+      const lastH = Number(last.duration_hours) || 0;
+      const avg7 = avgLast(rows, 7);
+      const debt = avg7 != null ? (TARGET_HOURS * 7) - avg7 * Math.min(7, rows.length) : null;
+      let statusCls = 'good', statusText = 'on target';
+      if (lastH < TARGET_HOURS - 1.5) { statusCls = 'bad'; statusText = 'short'; }
+      else if (lastH < TARGET_HOURS - 0.5) { statusCls = 'warn'; statusText = 'light'; }
+      const series = rows.slice(0, 14).reverse().map(r => Number(r.duration_hours) || 0);
+      const W = 600, H = 90, pad = 8;
+      const minV = Math.min.apply(null, series.concat([TARGET_HOURS - 1]));
+      const maxV = Math.max.apply(null, series.concat([TARGET_HOURS + 1]));
+      const range = (maxV - minV) || 1;
+      const pts = series.map((v, i) => ({ x: series.length === 1 ? W / 2 : (i / (series.length - 1)) * W, y: H - pad - ((v - minV) / range) * (H - pad * 2) }));
+      const lineD = smoothPath(pts);
+      const areaD = pts.length >= 2 ? lineD + ' L' + pts[pts.length - 1].x + ',' + H + ' L' + pts[0].x + ',' + H + ' Z' : '';
+      const targetY = H - pad - ((TARGET_HOURS - minV) / range) * (H - pad * 2);
+      cardEl.innerHTML =
+          '<div class="sc-head"><div class="sc-head-left">'
+        +   '<div class="sc-head-label">Last night</div>'
+        +   '<div class="sc-hours">' + fmtHrs(lastH) + '<span class="sc-hours-unit">asleep</span></div>'
+        +   '<div class="sc-times">' + fmtTime(last.sleep_start) + ' bed<span class="sc-times-dot">·</span>' + fmtTime(last.wake_time) + ' wake</div>'
+        + '</div><span class="sc-status-pill ' + statusCls + '">' + statusText + '</span></div>'
+        + '<div class="sc-spark-wrap"><div class="sc-spark-head"><span>Last ' + rows.slice(0, 14).length + ' nights</span><span>target ' + TARGET_HOURS + 'h</span></div>'
+        + '<svg class="sc-spark-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">'
+        + '<defs><linearGradient id="scSparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="currentColor" stop-opacity="0.45"/><stop offset="60%" stop-color="currentColor" stop-opacity="0.14"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>'
+        + '<line x1="0" x2="' + W + '" y1="' + targetY + '" y2="' + targetY + '" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3 4"/>'
+        + (areaD ? '<path d="' + areaD + '" fill="url(#scSparkGrad)"/>' : '')
+        + (lineD ? '<path d="' + lineD + '" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" style="filter: drop-shadow(0 0 5px currentColor)"/>' : '')
+        + '</svg></div>'
+        + '<div class="sc-stats">'
+        + stat('7-day avg', fmtHrs(avg7), avgClass(avg7))
+        + stat('Sleep debt', debt == null ? '—' : (debt > 0 ? '−' : '+') + fmtHrs(Math.abs(debt)), debtClass(debt))
+        + stat('Nights logged', String(rows.length), '')
+        + '</div>';
+    }
+    function start() { showMsg('Loading sleep…'); fetchSleepLogs().then(rows => render(rows || [])).catch(err => { console.error('[sleep-card] fetch failed', err); showMsg('Could not load sleep: ' + err.message, true); }); }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', start); } else { start(); }
+  })();
+  </script>
 
   <div class="section-title">Daily Stack</div>
 
