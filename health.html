@@ -732,7 +732,11 @@ main {
     }
 
     async function whoopFetch(path, t) {
-      const r = await fetch('https://api.prod.whoop.com/developer/v1' + path, {
+      // Proxy through /api/whoop-data — WHOOP's API blocks browser CORS.
+      const [p, qs] = path.split('?');
+      const params = new URLSearchParams(qs || '');
+      params.set('path', p);
+      const r = await fetch('/api/whoop-data?' + params.toString(), {
         headers: { 'Authorization': 'Bearer ' + t.access, 'Accept': 'application/json' },
       });
       if (r.status === 401) {
